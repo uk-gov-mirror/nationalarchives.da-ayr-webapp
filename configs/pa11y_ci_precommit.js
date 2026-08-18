@@ -1,4 +1,4 @@
-const base_url = "https://127.0.0.1:5000";
+const baseurl = "https://127.0.0.1:5000";
 
 module.exports = {
   defaults: {
@@ -15,18 +15,18 @@ module.exports = {
   },
   urls: [
     // static pages
-    `${base_url}/how-to-use-this-service`,
-    `${base_url}/terms-of-use`,
-    `${base_url}/privacy`,
-    `${base_url}/cookies`,
-    `${base_url}/accessibility`,
-    `${base_url}/signed-out`,
-    `${base_url}/`,
+    `${baseurl}/how-to-use-this-service`,
+    `${baseurl}/terms-of-use`,
+    `${baseurl}/privacy`,
+    `${baseurl}/cookies`,
+    `${baseurl}/accessibility`,
+    `${baseurl}/signed-out`,
+    `${baseurl}/`,
 
     // authentication steps
-    `${base_url}/sign-out`,
+    `${baseurl}/sign-out`,
     {
-      url: `${base_url}/sign-in`,
+      url: `${baseurl}/sign-in`,
       actions: [
         "wait for element #username to be visible",
         `set field #username to ${process.env.AYR_AAU_USER_USERNAME}`,
@@ -37,11 +37,13 @@ module.exports = {
     },
 
     // pages that require authentication
-    `${base_url}/browse`,
-    `${base_url}/browse/series/1d4cedb8-95f5-4e5e-bc56-c0c0f6cccbd7`,
-    `${base_url}/browse/consignment/b4a8379c-0767-4a9b-8537-181aed23e837`,
-    `${base_url}/record/100251bb-5b93-48a9-953f-ad5bd9abfbdc`,
-    `${base_url}/search_results_summary?query=test`,
-    `${base_url}/search/transferring_body/c3e3fd83-4d52-4638-a085-1f4e4e4dfa50?query=test`,
+    `${baseurl}/browse`,
+    `${baseurl}/browse/series/1d4cedb8-95f5-4e5e-bc56-c0c0f6cccbd7`,
+    `${baseurl}/browse/consignment/b4a8379c-0767-4a9b-8537-181aed23e837`,
+    `${baseurl}/record/100251bb-5b93-48a9-953f-ad5bd9abfbdc`,
+    `${baseurl}/search_results_summary?query=test`,
+    `${baseurl}/search/transferring_body/` +
+      "c3e3fd83-4d52-4638-a085-1f4e4e4dfa50" +
+      `?query=test`,
   ],
 };

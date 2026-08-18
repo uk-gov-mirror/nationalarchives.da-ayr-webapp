@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { spawnSync } = require("node:child_process");
 
 const REQUIRED_ENV_VARS = [

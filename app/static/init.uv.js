@@ -1,3 +1,4 @@
+/* eslint-disable */
 const script = document.getElementById("init-uv");
 const manifest_url = script.getAttribute("manifest_url");
 

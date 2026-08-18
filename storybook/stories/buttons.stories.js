@@ -1,8 +1,8 @@
-import govukButtonHtml from "../html/govuk-button.html?raw";
-import govukButtonStartHtml from "../html/govuk-button-start.html?raw";
-import govukButtonSecondaryHtml from "../html/govuk-button-secondary.html?raw";
-import govukButtonWarningHtml from "../html/govuk-button-warning.html?raw";
 import govukButtonDisabledHtml from "../html/govuk-button-disabled.html?raw";
+import govukButtonSecondaryHtml from "../html/govuk-button-secondary.html?raw";
+import govukButtonStartHtml from "../html/govuk-button-start.html?raw";
+import govukButtonWarningHtml from "../html/govuk-button-warning.html?raw";
+import govukButtonHtml from "../html/govuk-button.html?raw";
 
 export default {
   title: "GOV.UK/Button",

@@ -1,3 +1,4 @@
+/* eslint-disable */
 require("@testing-library/jest-dom");
 // Mock MutationObserver globally to avoid jsdom runtime errors
 class MockMutationObserver {

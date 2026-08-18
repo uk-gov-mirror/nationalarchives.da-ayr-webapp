@@ -1,7 +1,6 @@
-import alertBannerHtml from "../html/alert-banner.html?raw";
 import alertBannerErrorHtml from "../html/alert-banner-error.html?raw";
 import alertBannerSuccessHtml from "../html/alert-banner-success.html?raw";
-
+import alertBannerHtml from "../html/alert-banner.html?raw";
 import bellyBandHtml from "../html/belly-band.html?raw";
 
 export default {
