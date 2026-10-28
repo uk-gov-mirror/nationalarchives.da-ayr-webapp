@@ -733,8 +733,15 @@ class TestRecord:
         Then the response status code should be 200
         And the HTML content should show only the fields for open records
         And the closed-record-only fields should not be visible
+        UPDATE: Under the updated template logic, empty fields are intentionally
+        hidden from the UI to avoid cluttering the summary list.
         """
-        file = FileFactory()
+        file = FileFactory(
+            ClosureType="Open",
+            EndDate=date(2023, 1, 15),
+            DateLastModified=date(2023, 1, 15),
+            OpeningDate=date(2023, 2, 25),
+        )
 
         bucket_name = "test_bucket"
         app.config["RECORD_BUCKET_NAME"] = bucket_name
@@ -761,15 +768,6 @@ class TestRecord:
             "Series reference",
             "Consignment reference",
             "File reference",
-            "Former reference",
-            "Translated file name",
-            "Related material",
-            "Restrictions on use",
-            "Note",
-            "Held by",
-            "Legal status",
-            "Rights copyright",
-            "Language",
         ]
         for field in expected_fields:
             assert field in summary_list_text, (
@@ -787,6 +785,22 @@ class TestRecord:
         for field in closed_only_fields:
             assert field not in summary_list_text, (
                 f"Field '{field}' should not be visible for a purely open record"
+            )
+
+        hidden_empty_fields = [
+            "Former reference",
+            "Translated file name",
+            "Related material",
+            "Restrictions on use",
+            "Note",
+            "Held by",
+            "Legal status",
+            "Rights copyright",
+            "Language",
+        ]
+        for field in hidden_empty_fields:
+            assert field not in summary_list_text, (
+                f"Empty field '{field}' should be hidden because it has no value"
             )
 
     @mock_aws
