@@ -100,6 +100,7 @@ def process_message(message: dict[str, Any]) -> dict[str, Any]:
     file_id = require_text(message, "fileId")
     extension = message.get("extension") or ""
     allow_partial_raw_value = message.get("allowPartialIdentification", "false")
+    force_rerun = bool(message.get("forceRerun", False))
 
     if not isinstance(
         allow_partial_raw_value, str
@@ -111,10 +112,13 @@ def process_message(message: dict[str, Any]) -> dict[str, Any]:
 
     allow_partial = allow_partial_raw_value.lower() == "true"
 
-    if is_file_already_complete(
-        run_id=run_id,
-        consignment_reference=consignment_reference,
-        file_id=file_id,
+    if (
+        is_file_already_complete(
+            run_id=run_id,
+            consignment_reference=consignment_reference,
+            file_id=file_id,
+        )
+        and not force_rerun
     ):
         finaliser_triggered = trigger_finaliser_if_ready(
             run_id=run_id,
@@ -190,6 +194,7 @@ def run_droid_for_s3_object(
     file_id: str,
     extension: str,
     allow_partial_identification: bool = False,
+    force_rerun: bool = False,
 ) -> dict[str, str]:
     validate_s3_object_key(key)
     alias_key = build_droid_input_alias_key(file_id, extension)

@@ -148,10 +148,12 @@ def process_message(message: dict[str, Any], context: Any) -> None:
     run_id = require_text(message, "runId")
     series = require_text(message, "series")
     consignment_reference = require_text(message, "consignmentReference")
+    force_rerun = bool(message.get("forceRerun", False))
 
     should_finalise = start_finalising_or_skip(
         run_id=run_id,
         consignment_reference=consignment_reference,
+        force_rerun=force_rerun,
     )
 
     if not should_finalise:
@@ -647,7 +649,9 @@ def publish_ddt_message(message: dict[str, Any]) -> str:
     return message_id
 
 
-def start_finalising_or_skip(run_id: str, consignment_reference: str) -> bool:
+def start_finalising_or_skip(
+    run_id: str, consignment_reference: str, force_rerun: bool
+) -> bool:
     """
     Take the finaliser lock for a consignment.
 
@@ -684,8 +688,27 @@ def start_finalising_or_skip(run_id: str, consignment_reference: str) -> bool:
 
     status = get_consignment_status(run_id, consignment_reference)
 
-    if status == SENT_TO_DDT:
+    if status == SENT_TO_DDT and not force_rerun:
         return False
+
+    if status == SENT_TO_DDT and force_rerun:
+        dynamodb.update_item(
+            TableName=TRACKING_TABLE_NAME,
+            Key=consignment_key(
+                run_id,
+                consignment_reference,
+            ),
+            UpdateExpression=("SET #status = :finalising, updatedAt = :now"),
+            ExpressionAttributeNames={
+                "#status": "status",
+            },
+            ExpressionAttributeValues={
+                ":finalising": {"S": FINALISING},
+                ":now": {"S": utc_now_text()},
+            },
+        )
+
+        return True
 
     if status == FINALISING:
         raise RuntimeError(

@@ -86,13 +86,17 @@ def process_message(message: dict[str, Any]) -> None:
     expected_file_id = require_text(message, "fileId")
     include_body_and_series = require_bool(message, "includeBodyAndSeries")
     include_consignment = require_bool(message, "includeConsignment")
+    force_rerun = bool(message.get("forceRerun", False))
 
     consignment_status = get_consignment_status(
         run_id=run_id,
         consignment_reference=consignment_reference,
     )
 
-    if consignment_status in CONSIGNMENT_STATUSES_SKIP_WORKER:
+    if (
+        consignment_status in CONSIGNMENT_STATUSES_SKIP_WORKER
+        and not force_rerun
+    ):
         logger.info(
             "Skipping worker because consignment is already past worker stage. run_id=%s consignment=%s status=%s file_id=%s",
             run_id,
@@ -102,10 +106,13 @@ def process_message(message: dict[str, Any]) -> None:
         )
         return
 
-    if is_file_already_complete(
-        run_id=run_id,
-        consignment_reference=consignment_reference,
-        file_id=expected_file_id,
+    if (
+        is_file_already_complete(
+            run_id=run_id,
+            consignment_reference=consignment_reference,
+            file_id=expected_file_id,
+        )
+        and not force_rerun
     ):
         logger.info(
             "Skipping worker because file is already COMPLETE. run_id=%s consignment=%s file_id=%s",
@@ -253,6 +260,7 @@ def send_droid_message(
     file_id: str,
     key: str,
     extension: str,
+    force_rerun: bool,
 ) -> None:
     payload = {
         "runId": run_id,
@@ -261,6 +269,7 @@ def send_droid_message(
         "key": key,
         "fileId": file_id,
         "extension": extension,
+        "forceRerun": force_rerun,
     }
 
     response = sqs.send_message(
